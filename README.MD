@@ -9,3 +9,6 @@
 -  [ ] 开发板:东软载波 ES-PDS-ES32F369X
 -  [ ] 单片机:东软载波 ES32F365x
 ### 版权声明: YuxiangWang_0525(中国合法注册名称:王钰翔) © 2023-当前 保留部分权利 - 遵循MIT License
+### 开发代号声明:此开发代号"Cloudizon"是由开发者和开发团队(已转让权利)自发命名,意为悼念逝者[云依Cloud_izon](https://space.bilibili.com/1783560707) 如有冒犯 请与我联系!
+
+联系方式:[本人个人邮箱](mailto:xgwin12@hotmail.com)
