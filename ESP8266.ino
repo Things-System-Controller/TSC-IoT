@@ -179,7 +179,6 @@ void StatusCallback(void *cbData, int code, const char *string)
         }
       }
 
-        // 设置处理404情况的函数'handleNotFound'
         void handleNotFound() {
           esp8266_server.send(404, "text/plain", "404: Not found"); // 发送 HTTP 状态 404 (未找到页面) 并向浏览器发送文字 "404: Not found"
         }
