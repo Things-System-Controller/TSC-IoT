@@ -19,8 +19,9 @@ void setup(void) {
   pinMode(D2, OUTPUT); //2 引脚
 
   wifiMulti.addAP("nova 10z", "12345678"); // 代码编写者手机AP
-  wifiMulti.addAP("bmsgiotwifi", "12345678"); // 字节元物联网wifi名
+  wifiMulti.addAP("bmsgiotwifi", "WLAN@958$29852"); // 字节元物联网wifi名
   wifiMulti.addAP("Hi-iot", "88888888"); // 环境查找是否有这里列出的WiFi ID。如果有
+  //wifiMulti.addAP("TP-LINK_402", "13793238156");
   Serial.println("Connecting ...");                            // 则尝试使用此处存储的密码进行连接。
 
   int i = 0;
@@ -45,6 +46,11 @@ void setup(void) {
   esp8266_server.on("/close2", HTTP_POST, close2);  // 设置处理LED控制请求的函数'handleLED'
   esp8266_server.on("/closeall", HTTP_POST, closeall);  // 设置处理LED控制请求的函数'handleLED'
   esp8266_server.on("/music", HTTP_GET, playmusic);
+  esp8266_server.on("/appopen1", HTTP_GET, open1);
+  esp8266_server.on("/appclose1", HTTP_GET, close1);
+  esp8266_server.on("/appopen2", HTTP_GET, open2);
+  esp8266_server.on("/appclose2", HTTP_GET, close2);
+  esp8266_server.on("/getinfo.js", HTTP_GET, getinfo);
   esp8266_server.onNotFound(handleNotFound);        // 设置处理404情况的函数'handleNotFound'
 
   Serial.println("HTTP esp8266_server started");//  告知用户ESP8266网络服务功能已经启动
@@ -61,8 +67,13 @@ void loop(void) {
   也就是双引号中的内容就是NodeMCU发送的HTML代码。该代码可在网页中产生LED控制按钮。
   当用户按下按钮时，浏览器将会向NodeMCU的/LED页面发送HTTP请求，请求方式为POST。
   NodeMCU接收到此请求后将会执行handleLED函数内容*/
+void getinfo(){
+    esp8266_server.send(200, "text/javascript", "var info=\"xxxx 物联网道具\";var cnum=2");
+
+  
+}
 void handleRoot() {
-  esp8266_server.send(200, "text/html", "<meta http-equiv='content-type' content='text/html; charset=utf-8'><center><h1>xx cos道具-xxxx 物联网灯光控制器</h1>按下下面的按钮,控制道具的灯光</p><form action=\"/open1\" method=\"POST\"><input type=\"submit\" value=\"xx灯光开\"></form><br><form action=\"/close1\" method=\"POST\"><input type=\"submit\" value=\"xx灯光关\"></form><br><form action=\"/open2\" method=\"POST\"><input type=\"submit\" value=\"xx灯光开\"></form><br><form action=\"/close2\" method=\"POST\"><input type=\"submit\" value=\"xx灯光关\"></form><br><form action=\"/stop\" method=\"POST\"><input type=\"submit\" value=\"结束程序重启开发板\"></form><form action=\"\">道具播放网易云的音乐,输入网易云音乐ID:<input type=\"text\" id=\"musicid\" /></form><button onclick='playmusic(musicid.value)' >播放</button><script>function playmusic(musicid) { alert(\"按键点击！\"); var xmlhttp; if (musicid.length==0) { alert(\"请输入音乐ID！\"); return; } if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码 xmlhttp=new XMLHttpRequest(); } else {// IE6, IE5 浏览器执行代码 xmlhttp=new ActiveXObject(\"Microsoft.XMLHTTP\"); } var requestString = \"/music?config=on\" + \"&mid=http://music.163.com/song/media/outer/url?id=\"+musicid+\".mp3\";xmlhttp.open(\"GET\", requestString, true);xmlhttp.send(null);}</script></center>");}
+  esp8266_server.send(200, "text/html", "<meta http-equiv='content-type' content='text/html; charset=utf-8'><center><h1>xxxx 物联网灯光控制器</h1>按下下面的按钮,控制道具的灯光</p><form action=\"/open1\" method=\"POST\"><input type=\"submit\" value=\"枪头灯光开\"></form><br><form action=\"/close1\" method=\"POST\"><input type=\"submit\" value=\"枪头灯光关\"></form><br><form action=\"/open2\" method=\"POST\"><input type=\"submit\" value=\"枪尾灯光开\"></form><br><form action=\"/close2\" method=\"POST\"><input type=\"submit\" value=\"枪尾灯光关\"></form><br><form action=\"/stop\" method=\"POST\"><input type=\"submit\" value=\"结束程序重启开发板\"></form><form action=\"\">道具播放网易云的音乐,输入网易云音乐ID:<input type=\"text\" id=\"musicid\" /></form><button onclick='playmusic(musicid.value)' >播放</button><script>function playmusic(musicid) { alert(\"按键点击！\"); var xmlhttp; if (musicid.length==0) { alert(\"请输入音乐ID！\"); return; } if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码 xmlhttp=new XMLHttpRequest(); } else {// IE6, IE5 浏览器执行代码 xmlhttp=new ActiveXObject(\"Microsoft.XMLHTTP\"); } var requestString = \"/music?config=on\" + \"&mid=http://music.163.com/song/media/outer/url?id=\"+musicid+\".mp3\";xmlhttp.open(\"GET\", requestString, true);xmlhttp.send(null);}</script></center>");}
 
       //处理控制请求的函数
       void open1() {
@@ -145,19 +156,22 @@ void StatusCallback(void *cbData, int code, const char *string)
   Serial.flush();
 }
       //音乐播放
-      void playmusic() {
+     /* void playmusic() {
         String musicid;
           if (esp8266_server.hasArg("mid")) {
             musicid = esp8266_server.arg("mid");
           }
           Serial.printf(musicid.c_str());
-        const char *URL = musicid.c_str();
+        const char* URL = musicid.c_str();
+        Serial.printf("/nCode OK/n");
+       /* os_free(musicid);
+        Serial.printf("MusicIDTemp Free OK/n");
         AudioGeneratorMP3 *mp3;
         AudioFileSourceICYStream *file;
         AudioFileSourceBuffer *buff;
         AudioOutputI2SNoDAC *out;
         audioLogger = &Serial;
-//        file = new AudioFileSourceICYStream("http://music.163.com/song/media/outer/url?id=" + musicid.c_str() + ".mp3");
+        //file = new AudioFileSourceICYStream("http://music.163.com/song/media/outer/url?id=" + musicid.c_str() + ".mp3");
         file->RegisterMetadataCB(MDCallback, (void*)"ICY");
         buff = new AudioFileSourceBuffer(file, 2048);
         buff->RegisterStatusCB(StatusCallback, (void*)"buffer");
@@ -177,8 +191,45 @@ void StatusCallback(void *cbData, int code, const char *string)
           Serial.printf("MP3 done\n");
           delay(1000);
         }
-      }
+      }*/
+      void playmusic() {
+    String musicid;
+    if (esp8266_server.hasArg("mid")) {
+        musicid = esp8266_server.arg("mid");
+    }
+    //Serial.printf("%s\n", musicid.c_str());
+    AudioGeneratorMP3 *mp3;
+    AudioFileSourceICYStream *file;
+    AudioFileSourceBuffer *buff;
+    AudioOutputI2SNoDAC *out;
+    audioLogger = &Serial;
+    String url = "http://music.163.com/song/media/outer/url?id=" + musicid + ".mp3";
+    esp8266_server.close();
+    file = new AudioFileSourceICYStream(url.c_str());
+    file->RegisterMetadataCB(MDCallback, (void*)"ICY");
+    buff = new AudioFileSourceBuffer(file, 4096);
+    buff->RegisterStatusCB(StatusCallback, (void*)"buffer");
+    out = new AudioOutputI2SNoDAC();
+    mp3 = new AudioGeneratorMP3();
+    mp3->RegisterStatusCB(StatusCallback, (void*)"mp3");
+    mp3->begin(buff, out);
+    static int lastms = 0;
+    if (mp3->isRunning()) {
+        if (millis() - lastms > 1000) {
+            lastms = millis();
+            Serial.printf("Running for %d ms...\n", lastms);
+            Serial.flush();
+        }
+        esp8266_server.begin(); 
+        if (!mp3->loop()) mp3->stop();
+    } else {
+        Serial.printf("MP3 done\n");
+        delay(1000);
+    }
+}
 
+
+        // 设置处理404情况的函数'handleNotFound'
         void handleNotFound() {
           esp8266_server.send(404, "text/plain", "404: Not found"); // 发送 HTTP 状态 404 (未找到页面) 并向浏览器发送文字 "404: Not found"
         }
