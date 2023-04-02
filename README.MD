@@ -1,4 +1,4 @@
-# TSC-IoT  Things System Controller
+# TSC-IoT - Things System Controller
 ## Single-chip microcomputer/IoT development board lightweight firmware for manual production 为手工制作而生的单片机/物联网开发板轻量固件
 当前版本 1.0.0 LTS Codename:Cloudizon
 ### 支持的平台
