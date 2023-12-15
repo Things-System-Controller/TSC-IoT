@@ -4,7 +4,7 @@
 ### 支持的平台
 -  [x] 开发板:ESP8266/ESP32
 -  [ ] 开发板:正点原子 潘多拉IoT物联网板
--  [ ] 单片机:通用 德州仪器(Texas Instruments) CC2530(预支持)
+-  [x] 单片机:通用 德州仪器(Texas Instruments) CC2530(预支持)
 -  [ ] 开发板:树莓派 Pico
 -  [ ] 单片机:STC89C52RC+STM32
 -  [ ] 开发板:东软载波 ES-PDS-ES32F369X
