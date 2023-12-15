@@ -1,3 +1,4 @@
+// Things System Controller - 2.0.0 Time Paradox
 #include <ESP8266WiFi.h>        // 本程序使用 ESP8266WiFi库
 #include <ESP8266WiFiMulti.h>   //  ESP8266WiFiMulti库
 #include <ESP8266WebServer.h>   //  ESP8266WebServer库
@@ -6,6 +7,7 @@
 #include "AudioFileSourceBuffer.h"
 #include "AudioGeneratorMP3.h"
 #include "AudioOutputI2SNoDAC.h"
+#include <SoftwareSerial.h>
 ESP8266WiFiMulti wifiMulti;     // 建立ESP8266WiFiMulti对象,对象名称是 'wifiMulti'
 
 ESP8266WebServer esp8266_server(80);// 建立网络服务器对象，该对象用于响应HTTP请求。监听端口（80）
@@ -72,6 +74,7 @@ void getinfo(){
 
   
 }
+// 服务基本实现
 void handleRoot() {
   esp8266_server.send(200, "text/html", "<meta http-equiv='content-type' content='text/html; charset=utf-8'><center><h1>xxxx 物联网灯光控制器</h1>按下下面的按钮,控制道具的灯光</p><form action=\"/open1\" method=\"POST\"><input type=\"submit\" value=\"枪头灯光开\"></form><br><form action=\"/close1\" method=\"POST\"><input type=\"submit\" value=\"枪头灯光关\"></form><br><form action=\"/open2\" method=\"POST\"><input type=\"submit\" value=\"枪尾灯光开\"></form><br><form action=\"/close2\" method=\"POST\"><input type=\"submit\" value=\"枪尾灯光关\"></form><br><form action=\"/stop\" method=\"POST\"><input type=\"submit\" value=\"结束程序重启开发板\"></form><form action=\"\">道具播放网易云的音乐,输入网易云音乐ID:<input type=\"text\" id=\"musicid\" /></form><button onclick='playmusic(musicid.value)' >播放</button><script>function playmusic(musicid) { alert(\"按键点击！\"); var xmlhttp; if (musicid.length==0) { alert(\"请输入音乐ID！\"); return; } if (window.XMLHttpRequest) { // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码 xmlhttp=new XMLHttpRequest(); } else {// IE6, IE5 浏览器执行代码 xmlhttp=new ActiveXObject(\"Microsoft.XMLHTTP\"); } var requestString = \"/music?config=on\" + \"&mid=http://music.163.com/song/media/outer/url?id=\"+musicid+\".mp3\";xmlhttp.open(\"GET\", requestString, true);xmlhttp.send(null);}</script></center>");}
 
@@ -155,81 +158,30 @@ void StatusCallback(void *cbData, int code, const char *string)
   Serial.printf("STATUS(%s) '%d' = '%s'\n", ptr, code, s1);
   Serial.flush();
 }
-      //音乐播放
-     /* void playmusic() {
-        String musicid;
-          if (esp8266_server.hasArg("mid")) {
-            musicid = esp8266_server.arg("mid");
-          }
-          Serial.printf(musicid.c_str());
-        const char* URL = musicid.c_str();
-        Serial.printf("/nCode OK/n");
-       /* os_free(musicid);
-        Serial.printf("MusicIDTemp Free OK/n");
-        AudioGeneratorMP3 *mp3;
-        AudioFileSourceICYStream *file;
-        AudioFileSourceBuffer *buff;
-        AudioOutputI2SNoDAC *out;
-        audioLogger = &Serial;
-        //file = new AudioFileSourceICYStream("http://music.163.com/song/media/outer/url?id=" + musicid.c_str() + ".mp3");
-        file->RegisterMetadataCB(MDCallback, (void*)"ICY");
-        buff = new AudioFileSourceBuffer(file, 2048);
-        buff->RegisterStatusCB(StatusCallback, (void*)"buffer");
-        out = new AudioOutputI2SNoDAC();
-        mp3 = new AudioGeneratorMP3();
-        mp3->RegisterStatusCB(StatusCallback, (void*)"mp3");
-        mp3->begin(buff, out);
-        static int lastms = 0;
-        if (mp3->isRunning()) {
-          if (millis() - lastms > 1000) {
-            lastms = millis();
-            Serial.printf("Running for %d ms...\n", lastms);
-            Serial.flush();
-          }
-          if (!mp3->loop()) mp3->stop();
-        } else {
-          Serial.printf("MP3 done\n");
-          delay(1000);
-        }
-      }*/
-      void playmusic() {
-    String musicid;
-    if (esp8266_server.hasArg("mid")) {
-        musicid = esp8266_server.arg("mid");
-    }
-    //Serial.printf("%s\n", musicid.c_str());
-    AudioGeneratorMP3 *mp3;
-    AudioFileSourceICYStream *file;
-    AudioFileSourceBuffer *buff;
-    AudioOutputI2SNoDAC *out;
-    audioLogger = &Serial;
-    String url = "http://music.163.com/song/media/outer/url?id=" + musicid + ".mp3";
-    esp8266_server.close();
-    file = new AudioFileSourceICYStream(url.c_str());
-    file->RegisterMetadataCB(MDCallback, (void*)"ICY");
-    buff = new AudioFileSourceBuffer(file, 4096);
-    buff->RegisterStatusCB(StatusCallback, (void*)"buffer");
-    out = new AudioOutputI2SNoDAC();
-    mp3 = new AudioGeneratorMP3();
-    mp3->RegisterStatusCB(StatusCallback, (void*)"mp3");
-    mp3->begin(buff, out);
-    static int lastms = 0;
-    if (mp3->isRunning()) {
-        if (millis() - lastms > 1000) {
-            lastms = millis();
-            Serial.printf("Running for %d ms...\n", lastms);
-            Serial.flush();
-        }
-        esp8266_server.begin(); 
-        if (!mp3->loop()) mp3->stop();
-    } else {
-        Serial.printf("MP3 done\n");
-        delay(1000);
-    }
-}
-
 
         // 设置处理404情况的函数'handleNotFound'
         void handleNotFound() {
           esp8266_server.send(404, "text/plain", "404: Not found"); // 发送 HTTP 状态 404 (未找到页面) 并向浏览器发送文字 "404: Not found"
         }
+// Zigbee实现
+// CC2530
+
+// Things System Controller To Zigbee CC2530
+// void CC2530(){
+// SoftwareSerial zigbeeSerial(2, 3); // 使用软件串口连接Zigbee模块
+
+// void setup() {
+//   Serial.begin(9600); // 初始化串口通信
+//   zigbeeSerial.begin(9600); // 初始化Zigbee串口通信
+// }
+
+// void loop() {
+//   if (zigbeeSerial.available()) {
+//     Serial.write(zigbeeSerial.read()); // 将Zigbee模块接收到的数据发送到主串口
+//   }
+//   if (Serial.available()) {
+//     zigbeeSerial.write(Serial.read()); // 将主串口接收到的数据发送到Zigbee模块
+//   }
+// }
+
+// }
